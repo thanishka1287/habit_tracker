@@ -1,79 +1,82 @@
-# Habit Tracker
+\# Habit Tracker
 
-A simple Flutter habit tracker app: add habits, check them off daily, see your streak, and everything persists on-device.
 
-## What's included
+
+A simple habit tracker app built with Flutter. Add habits, check them off each day, and watch your streaks grow. Everything is saved on your device, so your habits are still there when you reopen the app.
+
+
+
+\## Features
+
+
+
+\- Add and delete habits
+
+\- Mark a habit as done for today
+
+\- Automatic streak counter
+
+\- Local storage with `shared\_preferences`
+
+
+
+\## Project structure
+
+
 
 ```
+
 lib/
-  main.dart                 # app entry point
-  models/habit.dart         # Habit data model + streak calculation
-  services/habit_storage.dart  # save/load habits via shared_preferences
-  screens/home_screen.dart  # main screen (list, add, toggle, delete)
-  widgets/habit_tile.dart   # single habit row UI
-pubspec.yaml                 # dependencies
-```
 
-This zip only has the `lib/` code + `pubspec.yaml` — it does **not** include the
-`android/`, `ios/`, `web/` platform folders, since those are auto-generated.
+&#x20; main.dart                    # app entry point
 
-## First-time setup (do this once)
+&#x20; models/habit.dart            # Habit model + streak calculation
 
-1. Install the Flutter SDK: https://docs.flutter.dev/get-started/install
-2. Confirm it works:
-   ```
-   flutter doctor
-   ```
+&#x20; services/habit\_storage.dart  # save/load habits
 
-## Getting this project running
+&#x20; screens/home\_screen.dart     # main screen
 
-1. Create a fresh Flutter project (this generates the platform folders):
-   ```
-   flutter create habit_tracker
-   cd habit_tracker
-   ```
-2. Delete the generated `lib/main.dart` and `pubspec.yaml`, then copy in the files
-   from this zip (`lib/`, `pubspec.yaml`, `.gitignore`, `README.md`) into the new
-   project folder, replacing what's there.
-3. Install dependencies:
-   ```
-   flutter pub get
-   ```
-4. Run it (with an emulator running or a device plugged in):
-   ```
-   flutter run
-   ```
-
-## Pushing to GitHub
-
-From inside the `habit_tracker` project folder:
+&#x20; widgets/habit\_tile.dart      # single habit row
 
 ```
-git init
-git add .
-git commit -m "Initial commit: habit tracker app"
-git branch -M main
-git remote add origin https://github.com/<your-username>/<your-repo>.git
-git push -u origin main
+
+
+
+\## Run it locally
+
+
+
+1\. Install Flutter: https://docs.flutter.dev/get-started/install
+
+2\. Clone this repo and open the folder
+
+3\. Install dependencies:
+
 ```
 
-## How it works (quick tour)
+&#x20;  flutter pub get
 
-- **Habit model** (`models/habit.dart`): each habit has a name and a list of
-  completed dates (as strings). `currentStreak` walks backward from today
-  counting consecutive completed days.
-- **Storage** (`services/habit_storage.dart`): habits are serialized to JSON
-  and saved with `shared_preferences`, so they're still there after you close
-  the app.
-- **Home screen** (`screens/home_screen.dart`): loads habits on start, and
-  saves after every add/toggle/delete.
-- **State management**: this uses plain `setState` — no Provider/Riverpod/Bloc.
-  Good enough for a project this size, and easier to learn from.
+```
 
-## Ideas to extend it
+4\. Run the app:
 
-- Calendar view showing which days were completed
-- Reminders/notifications
-- Categories or colors per habit
-- Weekly/monthly completion percentage
-- Swap `setState` for `Provider` once you're comfortable with the basics
+```
+
+&#x20;  flutter run
+
+```
+
+
+
+\## Ideas for the future
+
+
+
+\- Calendar view of completed days
+
+\- Daily reminders
+
+\- Colors and icons for each habit
+
+\- Weekly completion percentage
+
