@@ -43,6 +43,17 @@ class Habit {
     return streak;
   }
 
+  /// Days completed in the last 7 days (including today).
+  int get completedThisWeek {
+    int count = 0;
+    final now = DateTime.now();
+    for (int i = 0; i < 7; i++) {
+      final day = now.subtract(Duration(days: i));
+      if (completedDates.contains(_dateString(day))) count++;
+    }
+    return count;
+  }
+
   static String _todayString() => _dateString(DateTime.now());
 
   static String _dateString(DateTime date) {

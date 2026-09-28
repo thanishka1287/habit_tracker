@@ -16,6 +16,7 @@ class HabitTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final done = habit.isDoneToday();
+    final week = habit.completedThisWeek;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: ListTile(
@@ -28,7 +29,21 @@ class HabitTile extends StatelessWidget {
           ),
         ),
         title: Text(habit.name, style: const TextStyle(fontSize: 18)),
-        subtitle: Text('🔥 ${habit.currentStreak} day streak'),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('🔥 ${habit.currentStreak} day streak'),
+            const SizedBox(height: 6),
+            LinearProgressIndicator(
+              value: week / 7,
+              minHeight: 6,
+              borderRadius: BorderRadius.circular(3),
+            ),
+            const SizedBox(height: 2),
+            Text('$week/7 this week',
+                style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          ],
+        ),
         trailing: IconButton(
           icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
           onPressed: onDelete,
