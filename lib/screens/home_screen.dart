@@ -51,6 +51,30 @@ class _HomeScreenState extends State<HomeScreen> {
     _saveHabits();
   }
 
+  Future<void> _confirmDelete(Habit habit) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete habit?'),
+        content: Text('"${habit.name}" and its history will be removed.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete',
+                style: TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      _deleteHabit(habit);
+    }
+  }
+
   Future<void> _addHabitDialog() async {
     final controller = TextEditingController();
     int selectedColor = _colors.first;
@@ -117,6 +141,39 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Widget _buildSummary() {
+    final total = _habits.length;
+    final done = _habits.where((h) => h.isDoneToday()).length;
+    final allDone = total > 0 && done == total;
+
+    return Card(
+      margin: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              allDone ? 'All done for today! 🎉' : "Today's progress",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 10),
+            LinearProgressIndicator(
+              value: total == 0 ? 0 : done / total,
+              minHeight: 8,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '$done of $total habits completed',
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,13 +190,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               : ListView.builder(
                   padding: const EdgeInsets.only(top: 8, bottom: 80),
-                  itemCount: _habits.length,
+                  itemCount: _habits.length + 1,
                   itemBuilder: (context, index) {
-                    final habit = _habits[index];
+                    if (index == 0) return _buildSummary();
+                    final habit = _habits[index - 1];
                     return HabitTile(
                       habit: habit,
                       onToggle: () => _toggleHabit(habit),
-                      onDelete: () => _deleteHabit(habit),
+                      onDelete: () => _confirmDelete(habit),
                     );
                   },
                 ),
