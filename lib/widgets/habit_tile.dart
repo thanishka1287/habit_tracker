@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/habit.dart';
+import '../screens/habit_detail_screen.dart';
 
 class HabitTile extends StatelessWidget {
   final Habit habit;
@@ -21,6 +22,12 @@ class HabitTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: ListTile(
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => HabitDetailScreen(habit: habit),
+          ),
+        ),
         leading: GestureDetector(
           onTap: onToggle,
           child: Icon(
