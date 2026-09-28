@@ -12,6 +12,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  static const List<int> _colors = [
+    0xFF009688, // teal
+    0xFF2196F3, // blue
+    0xFF9C27B0, // purple
+    0xFFE91E63, // pink
+    0xFFFF9800, // orange
+    0xFF4CAF50, // green
+  ];
+
   List<Habit> _habits = [];
   bool _loading = true;
   final _uuid = const Uuid();
@@ -44,30 +53,66 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _addHabitDialog() async {
     final controller = TextEditingController();
-    final name = await showDialog<String>(
+    int selectedColor = _colors.first;
+
+    final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('New Habit'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: const InputDecoration(hintText: 'e.g. Drink water'),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('New Habit'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: controller,
+                autofocus: true,
+                decoration: const InputDecoration(hintText: 'e.g. Drink water'),
+              ),
+              const SizedBox(height: 16),
+              const Text('Pick a color'),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 10,
+                children: _colors.map((c) {
+                  return GestureDetector(
+                    onTap: () => setDialogState(() => selectedColor = c),
+                    child: CircleAvatar(
+                      radius: 16,
+                      backgroundColor: Color(c),
+                      child: selectedColor == c
+                          ? const Icon(Icons.check,
+                              color: Colors.white, size: 18)
+                          : null,
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, {
+                'name': controller.text.trim(),
+                'color': selectedColor,
+              }),
+              child: const Text('Add'),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: const Text('Add'),
-          ),
-        ],
       ),
     );
 
-    if (name != null && name.isNotEmpty) {
-      setState(() => _habits.add(Habit(id: _uuid.v4(), name: name)));
+    if (result != null && (result['name'] as String).isNotEmpty) {
+      setState(() => _habits.add(Habit(
+            id: _uuid.v4(),
+            name: result['name'] as String,
+            colorValue: result['color'] as int,
+          )));
       _saveHabits();
     }
   }

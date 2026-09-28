@@ -1,23 +1,27 @@
 class Habit {
   String id;
   String name;
+  int colorValue; // stored as an ARGB int, e.g. 0xFF009688
   List<String> completedDates; // stored as 'yyyy-MM-dd'
 
   Habit({
     required this.id,
     required this.name,
+    this.colorValue = 0xFF009688,
     List<String>? completedDates,
   }) : completedDates = completedDates ?? [];
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
+        'colorValue': colorValue,
         'completedDates': completedDates,
       };
 
   factory Habit.fromJson(Map<String, dynamic> json) => Habit(
         id: json['id'],
         name: json['name'],
+        colorValue: json['colorValue'] ?? 0xFF009688,
         completedDates: List<String>.from(json['completedDates'] ?? []),
       );
 

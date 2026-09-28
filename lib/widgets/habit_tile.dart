@@ -17,6 +17,7 @@ class HabitTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final done = habit.isDoneToday();
     final week = habit.completedThisWeek;
+    final color = Color(habit.colorValue);
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: ListTile(
@@ -24,7 +25,7 @@ class HabitTile extends StatelessWidget {
           onTap: onToggle,
           child: Icon(
             done ? Icons.check_circle : Icons.radio_button_unchecked,
-            color: done ? Colors.green : Colors.grey,
+            color: done ? color : Colors.grey,
             size: 32,
           ),
         ),
@@ -37,6 +38,7 @@ class HabitTile extends StatelessWidget {
             LinearProgressIndicator(
               value: week / 7,
               minHeight: 6,
+              color: color,
               borderRadius: BorderRadius.circular(3),
             ),
             const SizedBox(height: 2),
