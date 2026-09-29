@@ -82,15 +82,16 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _addHabitDialog() async {
-    final controller = TextEditingController();
-    int selectedColor = _colors.first;
+  Future<void> _habitFormDialog({Habit? existing}) async {
+    final controller = TextEditingController(text: existing?.name ?? '');
+    int selectedColor = existing?.colorValue ?? _colors.first;
+    final isEditing = existing != null;
 
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('New Habit'),
+          title: Text(isEditing ? 'Edit Habit' : 'New Habit'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 'name': controller.text.trim(),
                 'color': selectedColor,
               }),
-              child: const Text('Add'),
+              child: Text(isEditing ? 'Save' : 'Add'),
             ),
           ],
         ),
@@ -139,11 +140,18 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     if (result != null && (result['name'] as String).isNotEmpty) {
-      setState(() => _habits.add(Habit(
+      setState(() {
+        if (isEditing) {
+          existing.name = result['name'] as String;
+          existing.colorValue = result['color'] as int;
+        } else {
+          _habits.add(Habit(
             id: _uuid.v4(),
             name: result['name'] as String,
             colorValue: result['color'] as int,
-          )));
+          ));
+        }
+      });
       _saveHabits();
     }
   }
@@ -214,11 +222,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       habit: habit,
                       onToggle: () => _toggleHabit(habit),
                       onDelete: () => _confirmDelete(habit),
+                      onEdit: () => _habitFormDialog(existing: habit),
                     );
                   },
                 ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _addHabitDialog,
+        onPressed: () => _habitFormDialog(),
         child: const Icon(Icons.add),
       ),
     );
