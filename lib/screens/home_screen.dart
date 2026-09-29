@@ -5,7 +5,14 @@ import '../services/habit_storage.dart';
 import '../widgets/habit_tile.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final bool darkMode;
+  final VoidCallback onToggleTheme;
+
+  const HomeScreen({
+    super.key,
+    required this.darkMode,
+    required this.onToggleTheme,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -177,7 +184,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Habit Tracker'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Habit Tracker'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(widget.darkMode ? Icons.light_mode : Icons.dark_mode),
+            onPressed: widget.onToggleTheme,
+          ),
+        ],
+      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _habits.isEmpty
