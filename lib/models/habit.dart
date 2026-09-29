@@ -47,6 +47,27 @@ class Habit {
     return streak;
   }
 
+  /// Longest run of consecutive completed days across all history.
+  int get bestStreak {
+    if (completedDates.isEmpty) return 0;
+
+    final sortedDates = completedDates.toList()..sort();
+    final parsed = sortedDates.map(_parseDate).toList();
+
+    int best = 1;
+    int current = 1;
+    for (int i = 1; i < parsed.length; i++) {
+      final diff = parsed[i].difference(parsed[i - 1]).inDays;
+      if (diff == 1) {
+        current++;
+        if (current > best) best = current;
+      } else if (diff > 1) {
+        current = 1;
+      }
+    }
+    return best;
+  }
+
   /// Days completed in the last 7 days (including today).
   int get completedThisWeek {
     int count = 0;
@@ -65,5 +86,11 @@ class Habit {
     final m = date.month.toString().padLeft(2, '0');
     final d = date.day.toString().padLeft(2, '0');
     return '$y-$m-$d';
+  }
+
+  static DateTime _parseDate(String s) {
+    final parts = s.split('-');
+    return DateTime(
+        int.parse(parts[0]), int.parse(parts[1]), int.parse(parts[2]));
   }
 }

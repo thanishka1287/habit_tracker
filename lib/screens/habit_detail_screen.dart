@@ -131,13 +131,61 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
               '$doneThisMonth of $daysInMonth days completed this month',
               style: const TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 4),
-            Text(
-              '🔥 Current streak: ${habit.currentStreak} days',
-              style: const TextStyle(fontSize: 16),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _StatChip(
+                  icon: '🔥',
+                  label: 'Current streak',
+                  value: '${habit.currentStreak}',
+                  color: color,
+                ),
+                const SizedBox(width: 12),
+                _StatChip(
+                  icon: '🏆',
+                  label: 'Best streak',
+                  value: '${habit.bestStreak}',
+                  color: color,
+                ),
+              ],
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _StatChip extends StatelessWidget {
+  final String icon;
+  final String label;
+  final String value;
+  final Color color;
+
+  const _StatChip({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Text('$icon $value',
+              style: const TextStyle(
+                  fontSize: 20, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 2),
+          Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        ],
       ),
     );
   }
