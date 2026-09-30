@@ -83,10 +83,17 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  bool _isDuplicateName(String name, {Habit? excluding}) {
+    final lower = name.toLowerCase();
+    return _habits.any((h) =>
+        h.name.toLowerCase() == lower && h.id != excluding?.id);
+  }
+
   Future<void> _habitFormDialog({Habit? existing}) async {
     final controller = TextEditingController(text: existing?.name ?? '');
     int selectedColor = existing?.colorValue ?? _colors.first;
     final isEditing = existing != null;
+    String? errorText;
 
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
@@ -100,9 +107,14 @@ class _HomeScreenState extends State<HomeScreen> {
               TextField(
                 controller: controller,
                 autofocus: true,
-                decoration: const InputDecoration(hintText: 'e.g. Drink water'),
+                maxLength: 40,
+                decoration: InputDecoration(
+                  hintText: 'e.g. Drink water',
+                  errorText: errorText,
+                ),
+                onChanged: (_) => setDialogState(() => errorText = null),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               const Text('Pick a color'),
               const SizedBox(height: 8),
               Wrap(
@@ -129,10 +141,19 @@ class _HomeScreenState extends State<HomeScreen> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () => Navigator.pop(context, {
-                'name': controller.text.trim(),
-                'color': selectedColor,
-              }),
+              onPressed: () {
+                final name = controller.text.trim();
+                if (name.isEmpty) {
+                  setDialogState(() => errorText = 'Enter a habit name');
+                  return;
+                }
+                if (_isDuplicateName(name, excluding: existing)) {
+                  setDialogState(
+                      () => errorText = 'You already have this habit');
+                  return;
+                }
+                Navigator.pop(context, {'name': name, 'color': selectedColor});
+              },
               child: Text(isEditing ? 'Save' : 'Add'),
             ),
           ],
@@ -140,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
 
-    if (result != null && (result['name'] as String).isNotEmpty) {
+    if (result != null) {
       setState(() {
         if (isEditing) {
           existing.name = result['name'] as String;
