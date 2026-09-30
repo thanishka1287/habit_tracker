@@ -3,6 +3,7 @@ import 'package:uuid/uuid.dart';
 import '../models/habit.dart';
 import '../services/habit_storage.dart';
 import '../widgets/habit_tile.dart';
+import 'stats_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool darkMode;
@@ -196,6 +197,15 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Habit Tracker'),
         centerTitle: true,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.bar_chart_outlined),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => StatsScreen(habits: _habits),
+              ),
+            ),
+          ),
           IconButton(
             icon: Icon(widget.darkMode ? Icons.light_mode : Icons.dark_mode),
             onPressed: widget.onToggleTheme,
