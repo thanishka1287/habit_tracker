@@ -2,12 +2,14 @@ class Habit {
   String id;
   String name;
   int colorValue; // stored as an ARGB int, e.g. 0xFF009688
+  int iconCodePoint; // Material icon code point
   List<String> completedDates; // stored as 'yyyy-MM-dd'
 
   Habit({
     required this.id,
     required this.name,
     this.colorValue = 0xFF009688,
+    this.iconCodePoint = 0xe838, // star
     List<String>? completedDates,
   }) : completedDates = completedDates ?? [];
 
@@ -15,6 +17,7 @@ class Habit {
         'id': id,
         'name': name,
         'colorValue': colorValue,
+        'iconCodePoint': iconCodePoint,
         'completedDates': completedDates,
       };
 
@@ -22,6 +25,7 @@ class Habit {
         id: json['id'],
         name: json['name'],
         colorValue: json['colorValue'] ?? 0xFF009688,
+        iconCodePoint: json['iconCodePoint'] ?? 0xe838,
         completedDates: List<String>.from(json['completedDates'] ?? []),
       );
 

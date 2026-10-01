@@ -57,6 +57,12 @@ class StatsScreen extends StatelessWidget {
                       child: ListTile(
                         leading: CircleAvatar(
                           backgroundColor: Color(h.colorValue),
+                          child: Icon(
+                            IconData(h.iconCodePoint,
+                                fontFamily: 'MaterialIcons'),
+                            color: Colors.white,
+                            size: 18,
+                          ),
                         ),
                         title: Text(h.name),
                         subtitle: Text(

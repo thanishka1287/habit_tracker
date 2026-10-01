@@ -29,6 +29,19 @@ class _HomeScreenState extends State<HomeScreen> {
     0xFF4CAF50, // green
   ];
 
+  static const List<IconData> _icons = [
+    Icons.star,
+    Icons.fitness_center,
+    Icons.menu_book,
+    Icons.bedtime,
+    Icons.self_improvement,
+    Icons.local_drink,
+    Icons.directions_run,
+    Icons.restaurant,
+    Icons.eco,
+    Icons.alarm,
+  ];
+
   List<Habit> _habits = [];
   bool _loading = true;
   final _uuid = const Uuid();
@@ -90,6 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _habitFormDialog({Habit? existing}) async {
     final controller = TextEditingController(text: existing?.name ?? '');
     int selectedColor = existing?.colorValue ?? _colors.first;
+    int selectedIcon = existing?.iconCodePoint ?? _icons.first.codePoint;
     final isEditing = existing != null;
     String? errorText;
 
@@ -98,40 +112,67 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           title: Text(isEditing ? 'Edit Habit' : 'New Habit'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: controller,
-                autofocus: true,
-                maxLength: 40,
-                decoration: InputDecoration(
-                  hintText: 'e.g. Drink water',
-                  errorText: errorText,
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: controller,
+                  autofocus: true,
+                  maxLength: 40,
+                  decoration: InputDecoration(
+                    hintText: 'e.g. Drink water',
+                    errorText: errorText,
+                  ),
+                  onChanged: (_) => setDialogState(() => errorText = null),
                 ),
-                onChanged: (_) => setDialogState(() => errorText = null),
-              ),
-              const SizedBox(height: 8),
-              const Text('Pick a color'),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 10,
-                children: _colors.map((c) {
-                  return GestureDetector(
-                    onTap: () => setDialogState(() => selectedColor = c),
-                    child: CircleAvatar(
-                      radius: 16,
-                      backgroundColor: Color(c),
-                      child: selectedColor == c
-                          ? const Icon(Icons.check,
-                              color: Colors.white, size: 18)
-                          : null,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
+                const SizedBox(height: 8),
+                const Text('Pick a color'),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 10,
+                  children: _colors.map((c) {
+                    return GestureDetector(
+                      onTap: () => setDialogState(() => selectedColor = c),
+                      child: CircleAvatar(
+                        radius: 16,
+                        backgroundColor: Color(c),
+                        child: selectedColor == c
+                            ? const Icon(Icons.check,
+                                color: Colors.white, size: 18)
+                            : null,
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 16),
+                const Text('Pick an icon'),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: _icons.map((iconData) {
+                    final isSelected = selectedIcon == iconData.codePoint;
+                    return GestureDetector(
+                      onTap: () => setDialogState(
+                          () => selectedIcon = iconData.codePoint),
+                      child: CircleAvatar(
+                        radius: 18,
+                        backgroundColor: isSelected
+                            ? Color(selectedColor)
+                            : Colors.grey.shade300,
+                        child: Icon(
+                          iconData,
+                          color: isSelected ? Colors.white : Colors.grey.shade700,
+                          size: 20,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -150,7 +191,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       () => errorText = 'You already have this habit');
                   return;
                 }
-                Navigator.pop(context, {'name': name, 'color': selectedColor});
+                Navigator.pop(context, {
+                  'name': name,
+                  'color': selectedColor,
+                  'icon': selectedIcon,
+                });
               },
               child: Text(isEditing ? 'Save' : 'Add'),
             ),
@@ -164,11 +209,13 @@ class _HomeScreenState extends State<HomeScreen> {
         if (isEditing) {
           existing.name = result['name'] as String;
           existing.colorValue = result['color'] as int;
+          existing.iconCodePoint = result['icon'] as int;
         } else {
           _habits.add(Habit(
             id: _uuid.v4(),
             name: result['name'] as String,
             colorValue: result['color'] as int,
+            iconCodePoint: result['icon'] as int,
           ));
         }
       });

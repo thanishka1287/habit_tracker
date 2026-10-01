@@ -23,6 +23,7 @@ class HabitTile extends StatelessWidget {
     final done = habit.isDoneToday();
     final week = habit.completedThisWeek;
     final color = Color(habit.colorValue);
+    final icon = IconData(habit.iconCodePoint, fontFamily: 'MaterialIcons');
 
     return Dismissible(
       key: ValueKey(habit.id),
@@ -50,10 +51,12 @@ class HabitTile extends StatelessWidget {
           ),
           leading: GestureDetector(
             onTap: onToggle,
-            child: Icon(
-              done ? Icons.check_circle : Icons.radio_button_unchecked,
-              color: done ? color : Colors.grey,
-              size: 32,
+            child: CircleAvatar(
+              backgroundColor: done ? color : Colors.grey.shade300,
+              child: Icon(
+                done ? Icons.check : icon,
+                color: done ? Colors.white : Colors.grey.shade700,
+              ),
             ),
           ),
           title: Text(habit.name, style: const TextStyle(fontSize: 18)),
