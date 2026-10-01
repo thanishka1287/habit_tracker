@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _saveHabits();
   }
 
-  Future<void> _confirmDelete(Habit habit) async {
+  Future<bool> _confirmDelete(Habit habit) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -78,9 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
-    if (confirmed == true) {
-      _deleteHabit(habit);
-    }
+    return confirmed ?? false;
   }
 
   bool _isDuplicateName(String name, {Habit? excluding}) {
@@ -238,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
           : _habits.isEmpty
               ? const Center(
                   child: Text(
-                    'No habits yet.\nTap + to add your first one!',
+                    'No habits yet.\nTap + to add your first one!\n(Swipe left on a habit to delete it)',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
@@ -252,8 +250,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     return HabitTile(
                       habit: habit,
                       onToggle: () => _toggleHabit(habit),
-                      onDelete: () => _confirmDelete(habit),
+                      onDelete: () => _deleteHabit(habit),
                       onEdit: () => _habitFormDialog(existing: habit),
+                      confirmDismiss: () => _confirmDelete(habit),
                     );
                   },
                 ),
